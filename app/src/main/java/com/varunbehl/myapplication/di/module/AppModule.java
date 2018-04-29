@@ -1,6 +1,7 @@
 package com.varunbehl.myapplication.di.module;
 
 import android.app.Application;
+import android.content.Context;
 
 import javax.inject.Singleton;
 
@@ -18,6 +19,16 @@ public class AppModule {
     @Provides
     @Singleton
     Application provideApplication() {
+        return mApplication;
+    }
+
+
+    @Provides //scope is not necessary for parameters stored within the module
+    public Context context() {
+        return getmApplication().getApplicationContext();
+    }
+
+    public Application getmApplication() {
         return mApplication;
     }
 }
