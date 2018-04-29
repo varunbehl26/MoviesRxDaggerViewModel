@@ -2,26 +2,40 @@ package com.varunbehl.myapplication;
 
 import android.app.Application;
 
-import com.varunbehl.myapplication.di.component.AppComponent;
-import com.varunbehl.myapplication.di.component.DaggerAppComponent;
-import com.varunbehl.myapplication.di.module.ApiModule;
-import com.varunbehl.myapplication.di.module.AppModule;
+import com.varunbehl.myapplication.di.components.DaggerGitHubComponent;
+import com.varunbehl.myapplication.di.components.DaggerNetComponent;
+import com.varunbehl.myapplication.di.components.GitHubComponent;
+import com.varunbehl.myapplication.di.components.NetComponent;
+import com.varunbehl.myapplication.di.modules.AppModule;
+import com.varunbehl.myapplication.di.modules.GitHubModule;
+import com.varunbehl.myapplication.di.modules.NetModule;
 
 public class MyApplication extends Application {
-    private AppComponent mAppComponent;
-
     String API_BASE_URL = "http://api.themoviedb.org/";
+    private NetComponent mNetComponent;
+    private GitHubComponent mGitHubComponent;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        mAppComponent = DaggerAppComponent.builder()
+        mNetComponent = DaggerNetComponent.builder()
                 .appModule(new AppModule(this))
-                .apiModule(new ApiModule(API_BASE_URL))
+                .netModule(new NetModule(API_BASE_URL))
+                .build();
+
+        mGitHubComponent = DaggerGitHubComponent.builder()
+                .netComponent(mNetComponent)
+                .gitHubModule(new GitHubModule())
                 .build();
     }
 
-    public AppComponent getAppComponent() {
-        return mAppComponent;
+
+    public NetComponent getNetComponent() {
+        return mNetComponent;
     }
+
+    public GitHubComponent getGitHubComponent() {
+        return mGitHubComponent;
+    }
+
 }
