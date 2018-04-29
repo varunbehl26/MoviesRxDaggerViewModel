@@ -6,6 +6,9 @@ import android.app.Application;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.varunbehl.myapplication.network.DataInterface;
+
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
 
@@ -13,7 +16,9 @@ import dagger.Module;
 import dagger.Provides;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 @Module
@@ -44,10 +49,19 @@ public class ApiModule {
 
     @Provides
     @Singleton
-    OkHttpClient provideOkhttpClient(Cache cache) {
-        OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        builder.cache(cache);
-        return builder.build();
+    OkHttpClient provideOkHttpClient() {
+        OkHttpClient.Builder builder = new OkHttpClient().newBuilder();
+        builder.readTimeout(10, TimeUnit.SECONDS);
+        builder.connectTimeout(5, TimeUnit.SECONDS);
+
+//            if (BuildConfig.DEBUG) {
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        builder.addInterceptor(interceptor);
+//            }
+
+        OkHttpClient client = builder.build();
+        return client;
     }
 
 
@@ -56,9 +70,16 @@ public class ApiModule {
     Retrofit provideRetrofit(Gson gson, OkHttpClient okHttpClient) {
         return new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create(gson))
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .baseUrl(mBaseUrl)
                 .client(okHttpClient)
                 .build();
+    }
+
+
+    @Provides
+    public DataInterface providesGitHubInterface(Retrofit retrofit) {
+        return retrofit.create(DataInterface.class);
     }
 
 }
