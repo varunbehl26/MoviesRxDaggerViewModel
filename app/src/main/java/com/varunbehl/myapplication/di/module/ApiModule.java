@@ -1,4 +1,4 @@
-package com.varunbehl.myapplication.module;
+package com.varunbehl.myapplication.di.module;
 
 
 import android.app.Application;

@@ -1,4 +1,4 @@
-package com.varunbehl.myapplication.module;
+package com.varunbehl.myapplication.di.module;
 
 import android.app.Application;
 
@@ -8,10 +8,10 @@ import dagger.Module;
 import dagger.Provides;
 
 @Module
-class AppModule {
+public class AppModule {
     private Application mApplication;
 
-    AppModule(Application mApplication) {
+    public AppModule(Application mApplication) {
         this.mApplication = mApplication;
     }
 
