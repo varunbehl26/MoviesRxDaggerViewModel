@@ -14,7 +14,7 @@ import java.util.*
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
-    private val API_KEY = "29c90a4aee629499a2149041cc6a0ffd"
+    private val API_KEY = ""
     var dataInterface: DataInterface? = null
         @Inject set
 
